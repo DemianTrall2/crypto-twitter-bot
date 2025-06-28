@@ -1,1 +1,31 @@
+import tweepy
 
+# Твои ключи и токены для Twitter API (нужно получить на https://developer.twitter.com)
+API_KEY = 'тут_твой_api_key'
+API_SECRET = 'тут_твой_api_secret'
+ACCESS_TOKEN = 'тут_твой_access_token'
+ACCESS_SECRET = 'тут_твой_access_secret'
+
+def create_api():
+    auth = tweepy.OAuth1UserHandler(API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_SECRET)
+    api = tweepy.API(auth)
+    try:
+        api.verify_credentials()
+        print("Аутентификация успешна")
+    except Exception as e:
+        print("Ошибка при аутентификации:", e)
+        raise e
+    return api
+
+def main():
+    api = create_api()
+
+    # Публикуем твит
+    api.update_status("Привет! Это тестовый твит от моего Twitter-бота!")
+
+    # Поиск твитов с ключевым словом 'Python'
+    for tweet in tweepy.Cursor(api.search_tweets, q="Python", lang="ru").items(5):
+        print(f"{tweet.user.name}: {tweet.text}")
+
+if __name__ == "__main__":
+    main()
